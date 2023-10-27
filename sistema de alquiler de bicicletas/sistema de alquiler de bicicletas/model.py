@@ -4,9 +4,10 @@ from datetime import date
 import math
 from datetime import datetime
 from datetime import timedelta
+import csv
 class Bike:
     def __init__(self, id : str ,name: str, description: str, price: int, available: bool, model: str):
-        self.id = id
+        self.id: str = id
         self.name = name
         self.description = description
         self.price = price
@@ -14,6 +15,8 @@ class Bike:
         self.model = model
     def __str__(self):
         return f"{self.id} {self.name} {self.available} {self.price} {self.model}"
+   
+  
 class User:
     def __init__(self, name:str, email:str, phone:int):
         self.name = name
@@ -39,16 +42,40 @@ class Rental:
 
 class BikeRentalSystem:
     def __init__(self):
-        self.bikes = []
+        self.bikes: dict[str: Bike] = []
         self.users = []
         self.rentals = []
         self.invoices = []
+        self.__cargar_catalogoBicicletas()
+        self.__cargar_catalogosUsuarios()
+    def __cargar_catalogoBicicletas(self):
+        with open("data/catalogo-Bicicletas.csv") as file:
+            
+            csv_data = list(csv.reader(file, delimiter =(";")))
+            print(csv_data)
+            bicis = list(map(lambda data: Bike(data[0], data[1], data[2], float(data[3]), data[4], data[5]), list(csv_data)))
+            #lo hago con para el metodo de bicicletas-revisar
+            self.bikes = bicis
+            print(self.bikes)
+    def __cargar_catalogosUsuarios(self):
+        with open("data/catalogo-Usuarioss.csv") as file:
+            
+            csv_data = list(csv.reader(file, delimiter =(";")))
+            print(csv_data)
+            users = list(map(lambda data: User(data[0], data[1], data[2]), list(csv_data)))
+           # lo hago con para el metodo de usuarios-revisar
+            self.users= users 
+            print(self.users)
+
     # agregar bicicletas
     def agregar_bike(self, bike):
         self.bikes.append(bike)
+        
+        #aqui me tocaria agregar las bicicletas  pero en la interfax 
     # agregar usuarios
     def agregar_user(self, user):
         self.users.append(user)
+        #aqui me tocaria agregar los usuarios pero en la interfax 
     # rentar bicicletas
     def rentar_bike(self, bike, user, start_date, id_rental):
         rental = Rental(bike, user, start_date, id_rental)
