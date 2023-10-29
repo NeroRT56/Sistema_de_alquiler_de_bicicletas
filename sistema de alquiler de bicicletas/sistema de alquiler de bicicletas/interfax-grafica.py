@@ -19,6 +19,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
         self.__cargar_datos_bicicletas()
         self.usuario_seleccionado = None
         self.bicicleta_seleccionada = None
+        
     def __configurar(self):
         # configuramos el tableView
         self.listViewUsuariosDisponibles.setModel(QStandardItemModel())
@@ -31,6 +32,9 @@ class MainWindowSistemaBicicleta(QMainWindow):
         #enlazar los eventos de los botones /pushButtonAgrega_Nuevo_usuario /pushButtonAgregar_Nueva_Bicicleta / 
         self.pushButtonAgrega_Nuevo_usuario.clicked.connect(self.abrir_dialogo_Agregar_usuario)
         self.pushButtonAgregar_Nueva_Bicicleta.clicked.connect(self.abrir_dialogo_Agregar_bicicletas)
+        # Desde aca se utiliza para eliminar un item
+        self.pushButtonEliminar_Usuario.clicked.connect(self.eliminarItemSeleccionadoUsuario)
+        self.pushButtonEliminar_Bicicleta.clicked.connect(self.eliminarItemSeleccionadoBicicleta)
 
     #este metodo se va a ejecutar cada que el usuario le de click a un item de la lista 
     def obternerItemSeleccionado(self):
@@ -48,7 +52,32 @@ class MainWindowSistemaBicicleta(QMainWindow):
             ).itemFromIndex(indice_seleccionado)  # Obtengo el item QStandardItem que se ha seleccionado a partir del indice obtenido en la linea 45
             # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
             print(f"Elemento seleccionado: {self.bicicleta_seleccionada.bicis}")
+    def eliminarItemSeleccionadoUsuario(self):
+        currentIndex = self.listViewUsuariosDisponibles.currentRow()
 
+        item = self.listViewUsuariosDisponibles.item(currentIndex)
+        if item is None:
+            return
+        question = QMessageBox.question(self,"¿ Deseas eliminar un usuario ?" + item.text(), QMessageBox.yes | QMessageBox.no)
+        if question == QMessageBox.yes:
+            item = self.listViewUsuariosDisponibles.takeItem(currentIndex)
+            del item
+
+        #aqui se utiliza el metodo para eliminar un item del usuario 
+    def eliminarItemSeleccionadoBicicleta(self):
+        bicicleta = self.bicicleta_seleccionada.bicis
+        currentIndex = self.listViewBicicletasDisponibles.currentRow(bicicleta)
+        
+        item =self.listViewBicicletasDisponibles(currentIndex())
+         
+        
+        if item is None:
+            return
+        question = QMessageBox.question(self,"¿ Deseas eliminar un usuario ?" + item.text() , QMessageBox.yes | QMessageBox.no)
+        if question == QMessageBox.yes:
+            item = self.listViewUsuariosDisponibles.takeItem(currentIndex)
+            del item
+        
 
 
     def __cargar_datos_usuario(self):

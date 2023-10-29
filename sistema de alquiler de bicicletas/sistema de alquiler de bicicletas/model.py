@@ -57,6 +57,7 @@ class BikeRentalSystem:
             #lo hago con para el metodo de bicicletas-revisar
             self.bikes = bicis
             print(self.bikes)
+            # debo modificar dicho archivo si se modifica desde la consola 
     def __cargar_catalogosUsuarios(self):
         with open("data/catalogo-Usuarioss.csv") as file:
             
@@ -66,6 +67,7 @@ class BikeRentalSystem:
            # lo hago con para el metodo de usuarios-revisar
             self.users= users 
             print(self.users)
+            # debo modificar dicho archivo si se modifica desde la consola 
 
     # agregar bicicletas
     def agregar_bike(self, bike):
