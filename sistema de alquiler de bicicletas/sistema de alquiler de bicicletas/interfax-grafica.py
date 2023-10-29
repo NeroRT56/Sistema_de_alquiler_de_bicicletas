@@ -17,16 +17,37 @@ class MainWindowSistemaBicicleta(QMainWindow):
         self.__configurar()
         self.__cargar_datos_usuario()
         self.__cargar_datos_bicicletas()
+        self.usuario_seleccionado = None
+        self.bicicleta_seleccionada = None
     def __configurar(self):
         # configuramos el tableView
         self.listViewUsuariosDisponibles.setModel(QStandardItemModel())
         self.listViewBicicletasDisponibles.setModel(QStandardItemModel())
+        # Este metodo se va a ejecutar cada que el usuario seleccione un item de la lista.
+        self.listViewUsuariosDisponibles.selectionModel().selectionChanged.connect(self.obternerItemSeleccionado)
+        #este metodo se va a ejecutar cada que el usuario seleccione un item de las bicicletas
+        self.listViewBicicletasDisponibles.selectionModel().selectionChanged.connect(self.obternerItemSeleccionadoBicicletas)
 
         #enlazar los eventos de los botones /pushButtonAgrega_Nuevo_usuario /pushButtonAgregar_Nueva_Bicicleta / 
         self.pushButtonAgrega_Nuevo_usuario.clicked.connect(self.abrir_dialogo_Agregar_usuario)
         self.pushButtonAgregar_Nueva_Bicicleta.clicked.connect(self.abrir_dialogo_Agregar_bicicletas)
 
-
+    #este metodo se va a ejecutar cada que el usuario le de click a un item de la lista 
+    def obternerItemSeleccionado(self):
+        #metodo retorna el indice de la lista del elemento que se selecciono
+        indice_seleccionado = self.listViewUsuariosDisponibles.currentIndex()
+        if indice_seleccionado.isValid():  # Aca se verifica que el indice sea valido, (que no sea negativo y demas validaciones)
+            self.usuario_seleccionado = self.listViewUsuariosDisponibles.model(
+            ).itemFromIndex(indice_seleccionado)  # Obtengo el item QStandardItem que se ha seleccionado a partir del indice obtenido en la linea 45
+            # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
+            print(f"Elemento seleccionado: {self.usuario_seleccionado.user}")
+    def obternerItemSeleccionadoBicicletas(self):
+        indice_seleccionado = self.listViewBicicletasDisponibles.currentIndex()
+        if indice_seleccionado.isValid():  # Aca se verifica que el indice sea valido, (que no sea negativo y demas validaciones)
+            self.bicicleta_seleccionada = self.listViewBicicletasDisponibles.model(
+            ).itemFromIndex(indice_seleccionado)  # Obtengo el item QStandardItem que se ha seleccionado a partir del indice obtenido en la linea 45
+            # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
+            print(f"Elemento seleccionado: {self.bicicleta_seleccionada.bicis}")
 
 
 
