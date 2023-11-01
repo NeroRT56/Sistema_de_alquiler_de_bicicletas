@@ -35,6 +35,10 @@ class MainWindowSistemaBicicleta(QMainWindow):
         # Desde aca se utiliza para eliminar un item
         self.pushButtonEliminar_Usuario.clicked.connect(self.eliminarItemSeleccionadoUsuario)
         self.pushButtonEliminar_Bicicleta.clicked.connect(self.eliminarItemSeleccionadoBicicleta)
+        # enlazar con la funcion de rentar bicicleta 
+        self.pushButtonAlquilar_Bicicleta.clicked.connect(self.obtenerRentaBicicletas)
+        #devolver la renta de la factura 
+        self.pushButtonDevolver_Bicicleta.clicked.connect(self.devolverRentaBicicletas)
 
     #este metodo se va a ejecutar cada que el usuario le de click a un item de la lista 
     def obternerItemSeleccionado(self):
@@ -53,32 +57,45 @@ class MainWindowSistemaBicicleta(QMainWindow):
             # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
             print(f"Elemento seleccionado: {self.bicicleta_seleccionada.bicis}")
     def eliminarItemSeleccionadoUsuario(self):
-        currentIndex = self.listViewUsuariosDisponibles.currentRow()
 
-        item = self.listViewUsuariosDisponibles.item(currentIndex)
-        if item is None:
+        usuario = self.usuario_seleccionado.user
+        if usuario is None:
             return
-        question = QMessageBox.question(self,"¿ Deseas eliminar un usuario ?" + item.text(), QMessageBox.yes | QMessageBox.no)
-        if question == QMessageBox.yes:
-            item = self.listViewUsuariosDisponibles.takeItem(currentIndex)
-            del item
-
+        question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)
+        if question == QMessageBox.Yes:
+            del usuario
+            
+        
         #aqui se utiliza el metodo para eliminar un item del usuario 
     def eliminarItemSeleccionadoBicicleta(self):
         bicicleta = self.bicicleta_seleccionada.bicis
-        currentIndex = self.listViewBicicletasDisponibles.currentRow(bicicleta)
+        if bicicleta is None:
+            return
+        question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.name) , QMessageBox.Yes | QMessageBox.No)
+        if question == QMessageBox.Yes:
+            #Elimino
+            del bicicleta
+
+            # NO elimino 
+        #currentIndex = self.listViewBicicletasDisponibles.currentRow(bicicleta)
         
-        item =self.listViewBicicletasDisponibles(currentIndex())
+        #item =self.listViewBicicletasDisponibles(currentIndex())
          
         
-        if item is None:
-            return
-        question = QMessageBox.question(self,"¿ Deseas eliminar un usuario ?" + item.text() , QMessageBox.yes | QMessageBox.no)
-        if question == QMessageBox.yes:
-            item = self.listViewUsuariosDisponibles.takeItem(currentIndex)
-            del item
+        #if item is None:
+        #    return
+        #question = QMessageBox.question(self,"¿ Deseas eliminar un usuario ?" + item.text() , QMessageBox.yes | QMessageBox.no)
+        #if question == QMessageBox.yes:
+            #item = self.listViewUsuariosDisponibles.takeItem(currentIndex)
+            #del item
         
+    def obtenerRentaBicicletas(self):
+        #aquí esta la funcion de rentar bicicleta 
+        pass
 
+    def devolverRentaBicicletas(self):
+        #Aqui irá el metodo para devolver la bicicleta y pagar 
+        pass
 
     def __cargar_datos_usuario(self):
         # se quiere cargar los datos del catalogo de usuarios
@@ -119,8 +136,10 @@ class MainWindowSistemaBicicleta(QMainWindow):
             available = True
             modell = self.dialogo_agregar_bicicletas.lineEditModel.text()
             newBike=Bike(id, name, description, price, available, modell)
-            item = QStandardItem(str(newBike))
             self.runin.agregar_bike(newBike)
+            item = QStandardItem(str(newBike))
+            #aqui tenias un error corrigelo, no hace que se seleccione la bicicleta ojo pelao ❤🤣
+            item.bicis= newBike
             item.setEditable(False)
             self.listViewBicicletasDisponibles.model().appendRow(item)
         self.dialogo_agregar_bicicletas.limpiar()
