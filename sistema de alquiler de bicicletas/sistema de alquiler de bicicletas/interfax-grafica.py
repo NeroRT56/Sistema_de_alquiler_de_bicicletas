@@ -55,17 +55,30 @@ class MainWindowSistemaBicicleta(QMainWindow):
             # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
             print(f"Elemento seleccionado: {self.bicicleta_seleccionada.bicis}")
     def eliminarItemSeleccionadoUsuario(self):
+<<<<<<< HEAD
         usuario = self.usuario_seleccionado.user
         if usuario is None:
             return
         question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)       
         if question == QMessageBox.Yes:
             del usuario
+=======
+
+        usuario = self.usuario_seleccionado.user
+        if usuario is None:
+            return
+        question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)
+        if question == QMessageBox.Yes:
+            del usuario
+            
+        
+>>>>>>> 54b5175737065de64c2ec65dcff85288e55b76d4
         #aqui se utiliza el metodo para eliminar un item del usuario 
     def eliminarItemSeleccionadoBicicleta(self):
         bicicleta = self.bicicleta_seleccionada.bicis
         if bicicleta is None:
             return
+<<<<<<< HEAD
         question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.name) , QMessageBox.Yes | QMessageBox.No)
         if question == QMessageBox.Yes:
             del bicicleta
@@ -74,6 +87,30 @@ class MainWindowSistemaBicicleta(QMainWindow):
         #aquí esta la funcion de rentar bicicleta 
         pass
 
+=======
+        question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.name) , QMessageBox.Yes | QMessageBox.No)
+        if question == QMessageBox.Yes:
+            #Elimino
+            del bicicleta
+
+            # NO elimino 
+        #currentIndex = self.listViewBicicletasDisponibles.currentRow(bicicleta)
+        
+        #item =self.listViewBicicletasDisponibles(currentIndex())
+         
+        
+        #if item is None:
+        #    return
+        #question = QMessageBox.question(self,"¿ Deseas eliminar un usuario ?" + item.text() , QMessageBox.yes | QMessageBox.no)
+        #if question == QMessageBox.yes:
+            #item = self.listViewUsuariosDisponibles.takeItem(currentIndex)
+            #del item
+        
+    def obtenerRentaBicicletas(self):
+        #aquí esta la funcion de rentar bicicleta 
+        pass
+
+>>>>>>> 54b5175737065de64c2ec65dcff85288e55b76d4
     def devolverRentaBicicletas(self):
         #Aqui irá el metodo para devolver la bicicleta y pagar 
         pass
@@ -119,7 +156,12 @@ class MainWindowSistemaBicicleta(QMainWindow):
             newBike=Bike(id, name, description, price, available, modell)
             self.runin.agregar_bike(newBike)
             item = QStandardItem(str(newBike))
+<<<<<<< HEAD
             item.bicis = newBike
+=======
+            #aqui tenias un error corrigelo, no hace que se seleccione la bicicleta ojo pelao ❤🤣
+            item.bicis= newBike
+>>>>>>> 54b5175737065de64c2ec65dcff85288e55b76d4
             item.setEditable(False)
             self.listViewBicicletasDisponibles.model().appendRow(item)
         self.dialogo_agregar_bicicletas.limpiar()
