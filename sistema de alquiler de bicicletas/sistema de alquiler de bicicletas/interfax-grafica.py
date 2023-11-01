@@ -1,10 +1,11 @@
 import sys
 import typing
 from PyQt5.QtCore import QRegExp
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QDialog, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QDialog, QMessageBox, QListView
 from PyQt5 import QtCore, uic
 from model import Bike, BikeRentalSystem, User
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QRegExpValidator, QDoubleValidator
+from datetime import datetime
 class MainWindowSistemaBicicleta(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -55,16 +56,21 @@ class MainWindowSistemaBicicleta(QMainWindow):
             # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
             print(f"Elemento seleccionado: {self.bicicleta_seleccionada.bicis}")
     def eliminarItemSeleccionadoUsuario(self):
+        # falta solucionar el error 
         usuario = self.usuario_seleccionado.user
+        indice_seleccionado = self.listViewUsuariosDisponibles.currentIndex()
         if usuario is None:
             return
         question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)       
         if question == QMessageBox.Yes:
+
+
             del usuario
         #aqui se utiliza el metodo para eliminar un item del usuario 
     def eliminarItemSeleccionadoBicicleta(self):
         bicicleta = self.bicicleta_seleccionada.bicis
         if bicicleta is None:
+            
             return
         question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.name) , QMessageBox.Yes | QMessageBox.No)
         if question == QMessageBox.Yes:
@@ -73,6 +79,16 @@ class MainWindowSistemaBicicleta(QMainWindow):
     def obtenerRentaBicicletas(self):
         #aquí esta la funcion de rentar bicicleta 
         pass
+        usuario_selec = self.usuario_seleccionado.user
+        bicicleta_selec = self.bicicleta_seleccionada.bicis
+
+        if usuario_selec and bicicleta_selec:
+     # seleccionar bicicleta()
+            start_date = datetime.now()
+            print(start_date.hour)
+            # crear el objeto,
+            id_rental = usuario_selec.name + usuario_selec.phone
+            self.runin.rentar_bike(bicicleta_selec,usuario_selec,start_date, id_rental)
 
     def devolverRentaBicicletas(self):
         #Aqui irá el metodo para devolver la bicicleta y pagar 
@@ -86,6 +102,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
             item.user = user
             item.setEditable(False)
             self.listViewUsuariosDisponibles.model().appendRow(item)
+
     def __cargar_datos_bicicletas(self):
         bicicletas = self.runin.bikes
         for bicis in bicicletas:
@@ -93,6 +110,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
             item.bicis = bicis
             item.setEditable(False)
             self.listViewBicicletasDisponibles.model().appendRow(item)
+
     def abrir_dialogo_Agregar_usuario(self):
         resp = self.dialogo_agregar_usuario.exec()
         if resp == QDialog.Accepted:
@@ -106,7 +124,8 @@ class MainWindowSistemaBicicleta(QMainWindow):
             item.user = newUser
             item.setEditable(False)
             self.listViewUsuariosDisponibles.model().appendRow(item) # corregir 
-        self.dialogo_agregar_usuario.limpiar()    
+        self.dialogo_agregar_usuario.limpiar()
+
     def abrir_dialogo_Agregar_bicicletas(self):
         resp =self.dialogo_agregar_bicicletas.exec()
         if resp == QDialog.Accepted:
@@ -198,6 +217,7 @@ class DialogoBicicletasAdd(QDialog):
             msg_box.setText("Debe Ingresar todos los datos del formulario")
             msg_box.setStandardButtons(QMessageBox.Ok)
             msg_box.exec()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindowSistemaBicicleta()

@@ -33,6 +33,7 @@ class Rental:
         self.end_date = 0 
         self.id_rental = id_rental
     # funcionalidad de calcular el precio
+
     def calculate_price(self):
         tomorrow = self.start_date +timedelta(days=self.end_date)
         hours = (tomorrow.day - self.start_date.day)
@@ -48,6 +49,7 @@ class BikeRentalSystem:
         self.invoices = []
         self.__cargar_catalogoBicicletas()
         self.__cargar_catalogosUsuarios()
+
     def __cargar_catalogoBicicletas(self):
         with open("data/catalogo-Bicicletas.csv") as file:
             
@@ -57,7 +59,8 @@ class BikeRentalSystem:
             #lo hago con para el metodo de bicicletas-revisar
             self.bikes = bicis
             print(self.bikes)
-            # debo modificar dicho archivo si se modifica desde la consola 
+            # debo modificar dicho archivo 
+
     def __cargar_catalogosUsuarios(self):
         with open("data/catalogo-Usuarioss.csv") as file:
             
@@ -67,23 +70,41 @@ class BikeRentalSystem:
            # lo hago con para el metodo de usuarios-revisar
             self.users= users 
             print(self.users)
-            # debo modificar dicho archivo si se modifica desde la consola 
+            # debo modificar dicho archivo s 
 
-    # agregar bicicletas
+    def __agregaralCatalogoUsuarios(self,user : User):
+        #Aquí se modifica el archivo
+        listuser = [user.name,user.email,user.phone]
+        with open("data/catalogo-Usuarioss.csv", "a", newline="") as f_object:
+            writer_object = csv.writer(f_object, delimiter =(";"))
+            writer_object.writerow(listuser)
+            f_object.close()
+            
+    def __agregaralcatalogoBicicletas(self, bicis : Bike):
+        ##Aquí se modifica el archivo
+        listbicis = [bicis.id, bicis.name, bicis.description, bicis.price, bicis.available, bicis.model]
+        with open("data/catalogo-Bicicletas.csv", "a", newline="") as f_object:
+            writer_object = csv.writer(f_object, delimiter =(";"))
+            writer_object.writerow(listbicis)
+            f_object.close()
+
     def agregar_bike(self, bike):
         self.bikes.append(bike)
-        
-        #aqui me tocaria agregar las bicicletas  pero en la interfax 
+        #se utiliza el metedo para guardar en la interfaz por medio de agregar_bike
+        self.__agregaralcatalogoBicicletas(bike)
+         
     # agregar usuarios
     def agregar_user(self, user):
         self.users.append(user)
+        self.__agregaralCatalogoUsuarios(user)
         #aqui me tocaria agregar los usuarios pero en la interfax 
     # rentar bicicletas
     def rentar_bike(self, bike, user, start_date, id_rental):
         rental = Rental(bike, user, start_date, id_rental)
         self.rentals.append(rental)
         bike.available = False
-        
+        print(rental)
+        print(len(self.rentals))
     def return_bike(self, rental_id, end_date):
         rental:Rental = self.encontrar_rental(rental_id)
         rental.end_date = end_date
@@ -93,6 +114,7 @@ class BikeRentalSystem:
         self.invoices.append(invoice)
         #sacar rental de la lista
         return invoice
+    
     # buscar bicicletas
     def encontrar_bike(self, bike_id):
         for bike in self.bikes:
