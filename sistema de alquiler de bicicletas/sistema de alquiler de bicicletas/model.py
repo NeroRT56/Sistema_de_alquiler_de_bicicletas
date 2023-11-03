@@ -26,13 +26,14 @@ class User:
         return f"{self.name} {self.phone}"
 
 class Rental:
-    def __init__(self, bike: Bike, user: str, start_date, id_rental: str):
+    def __init__(self, bike: Bike, user: str, start_date, end_date, id_rental: str):
         self.bike = bike
         self.user = user
         self.start_date = start_date # igual a datetime.now()
         self.end_date = 0 
         self.id_rental = id_rental
     # funcionalidad de calcular el precio
+    # me toco colocar end_date porque me lo pedia 
 
     def calculate_price(self):
         tomorrow = self.start_date +timedelta(days=self.end_date)
@@ -49,6 +50,8 @@ class BikeRentalSystem:
         self.invoices = []
         self.__cargar_catalogoBicicletas()
         self.__cargar_catalogosUsuarios()
+        self.__cargar_catalogoRentas()
+        
 
     def __cargar_catalogoBicicletas(self):
         with open("data/catalogo-Bicicletas.csv") as file:
@@ -72,6 +75,15 @@ class BikeRentalSystem:
             print(self.users)
             # debo modificar dicho archivo s 
 
+    def __cargar_catalogoRentas(self):
+        with open ("data/catalogo-Rentas.csv") as file:
+            csv_data = list(csv.reader(file, delimiter =(";")))
+            print(csv_data)
+            rentas = list(map(lambda data: Rental(data[0], data[1], data[2], data[3], data[4]), list(csv_data)))
+            self.rentals = rentas
+            print(self.rentals)
+
+
     def __agregaralCatalogoUsuarios(self,user : User):
         #Aquí se modifica el archivo
         listuser = [user.name,user.email,user.phone]
@@ -87,6 +99,13 @@ class BikeRentalSystem:
             writer_object = csv.writer(f_object, delimiter =(";"))
             writer_object.writerow(listbicis)
             f_object.close()
+    def __agregaralcatalogoRentas(self, rentas : Rental):
+        listrentas= [rentas.bike, rentas.user , rentas.start_date, rentas.end_date, rentas.id_rental]
+        with open("data/catalogo-Rentas.csv", "a", newline="") as f_object:
+            writer_object = csv.writer(f_object, delimiter =(";"))
+            writer_object.writerow(listrentas)
+            f_object.close()
+
 
     def agregar_bike(self, bike):
         self.bikes.append(bike)
@@ -99,12 +118,14 @@ class BikeRentalSystem:
         self.__agregaralCatalogoUsuarios(user)
         #aqui me tocaria agregar los usuarios pero en la interfax 
     # rentar bicicletas
-    def rentar_bike(self, bike, user, start_date, id_rental):
-        rental = Rental(bike, user, start_date, id_rental)
+    def rentar_bike(self, bike, user, start_date,end_date, id_rental):
+        rental = Rental(bike, user, start_date, end_date,  id_rental) # Aqui tambien me generaba error con el end date
         self.rentals.append(rental)
         bike.available = False
         print(rental)
         print(len(self.rentals))
+        self.__agregaralcatalogoRentas(rental)
+        
     def return_bike(self, rental_id, end_date):
         rental:Rental = self.encontrar_rental(rental_id)
         rental.end_date = end_date

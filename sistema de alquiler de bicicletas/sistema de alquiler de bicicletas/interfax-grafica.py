@@ -17,13 +17,16 @@ class MainWindowSistemaBicicleta(QMainWindow):
         self.__configurar()
         self.__cargar_datos_usuario()
         self.__cargar_datos_bicicletas()
+        self.__cargar_datos_rentas()
         self.usuario_seleccionado = None
         self.bicicleta_seleccionada = None
+        self.rentas_seleccionada =None
         
     def __configurar(self):
         # configuramos el tableView
         self.listViewUsuariosDisponibles.setModel(QStandardItemModel())
         self.listViewBicicletasDisponibles.setModel(QStandardItemModel())
+        self.listViewrentas.setModel(QStandardItemModel())
         # Este metodo se va a ejecutar cada que el usuario seleccione un item de la lista.
         self.listViewUsuariosDisponibles.selectionModel().selectionChanged.connect(self.obternerItemSeleccionadoUsuario)
         #este metodo se va a ejecutar cada que el usuario seleccione un item de las bicicletas
@@ -58,7 +61,6 @@ class MainWindowSistemaBicicleta(QMainWindow):
     def eliminarItemSeleccionadoUsuario(self):
         # falta solucionar el error 
         usuario = self.usuario_seleccionado.user
-        indice_seleccionado = self.listViewUsuariosDisponibles.currentIndex()
         if usuario is None:
             return
         question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)       
@@ -78,18 +80,32 @@ class MainWindowSistemaBicicleta(QMainWindow):
 
     def obtenerRentaBicicletas(self):
         #aquí esta la funcion de rentar bicicleta 
-        pass
         usuario_selec = self.usuario_seleccionado.user
         bicicleta_selec = self.bicicleta_seleccionada.bicis
-
+        #se coloca porque me genera un error 
+        end_date = 0
         if usuario_selec and bicicleta_selec:
      # seleccionar bicicleta()
             start_date = datetime.now()
             print(start_date.hour)
             # crear el objeto,
             id_rental = usuario_selec.name + usuario_selec.phone
-            self.runin.rentar_bike(bicicleta_selec,usuario_selec,start_date, id_rental)
-
+            self.runin.rentar_bike(bicicleta_selec,usuario_selec,start_date, end_date, id_rental)
+        else:
+            msg_box = QMessageBox(None)
+            msg_box.setWindowTitle("Error")
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Debe Seleccionar el usuario y la bicicleta para poder rentarla")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec()
+            #no funciona el condicional 
+    def obtenerItemSeleccionadoRenta(self):
+        indice_seleccionado = self.listViewrentas.currentIndex()
+        if indice_seleccionado.isValid():
+            self.rentas_seleccionada = self.listViewrentas.model(
+            ).itemFromIndex(indice_seleccionado) 
+            print(f"Elemento seleccionado: {self.rentas_seleccionada.rentas}")
+            #solucionar el error no imprime
     def devolverRentaBicicletas(self):
         #Aqui irá el metodo para devolver la bicicleta y pagar 
         pass
@@ -102,6 +118,14 @@ class MainWindowSistemaBicicleta(QMainWindow):
             item.user = user
             item.setEditable(False)
             self.listViewUsuariosDisponibles.model().appendRow(item)
+    def __cargar_datos_rentas(self):
+        #continuar con el proceso
+        rentas = self.runin.rentals
+        for rent in rentas:
+            item = QStandardItem(str(rent))
+            item.rent = rent
+            item.setEditable(False)
+            self.listViewrentas.model().appendRow(item)
 
     def __cargar_datos_bicicletas(self):
         bicicletas = self.runin.bikes
@@ -160,7 +184,7 @@ class DialogoUsuariosAdd(QDialog):
         self.lineEditNombre.clear()
         self.lineEditCelular.clear()
         self.lineEditCorreo.clear()
-        pass
+        
 
 
     def accept(self) -> None:
