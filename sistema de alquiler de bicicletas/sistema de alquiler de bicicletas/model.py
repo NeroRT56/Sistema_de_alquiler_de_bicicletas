@@ -125,7 +125,7 @@ class BikeRentalSystem:
         print(rental)
         print(len(self.rentals))
         self.__agregaralcatalogoRentas(rental)
-        
+
     def return_bike(self, rental_id, end_date):
         rental:Rental = self.encontrar_rental(rental_id)
         rental.end_date = end_date
@@ -157,8 +157,10 @@ class BikeRentalSystem:
     def imprimir_bicicletas(self):
         for bike in self.bikes:
             print(bike)
-    def eliminar_bicicleta(self, bike ):
+    def eliminar_bicicleta(self, bike: Bike ):
         self.bikes.remove(bike)
+    def eliminar_usuario(self, user : User):
+        self.users.remove(user)
 class Invoice:
     def __init__(self, rental, price: str):
         self.rental = rental

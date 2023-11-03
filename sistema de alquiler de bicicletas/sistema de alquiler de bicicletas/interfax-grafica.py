@@ -65,9 +65,10 @@ class MainWindowSistemaBicicleta(QMainWindow):
             return
         question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)       
         if question == QMessageBox.Yes:
+            usuario.runin.eliminar_usuario()
 
 
-            del usuario
+            del usuario.r
         #aqui se utiliza el metodo para eliminar un item del usuario 
     def eliminarItemSeleccionadoBicicleta(self):
         bicicleta = self.bicicleta_seleccionada.bicis
@@ -76,6 +77,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
             return
         question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.name) , QMessageBox.Yes | QMessageBox.No)
         if question == QMessageBox.Yes:
+            bicicleta.self.runin.eliminar_bicicleta()
             del bicicleta
 
     def obtenerRentaBicicletas(self):
