@@ -26,11 +26,11 @@ class User:
         return f"{self.name} {self.phone}"
 
 class Rental:
-    def __init__(self, bike: Bike, user: str, start_date, end_date, id_rental: str):
+    def __init__(self, bike: Bike, user: str, start_date,end_date=None, id_rental: str =""):
         self.bike = bike
         self.user = user
         self.start_date = start_date # igual a datetime.now()
-        self.end_date = 0 
+        self.end_date = end_date
         self.id_rental = id_rental
     # funcionalidad de calcular el precio
     # me toco colocar end_date porque me lo pedia 
@@ -125,6 +125,7 @@ class BikeRentalSystem:
         print(rental)
         print(len(self.rentals))
         self.__agregaralcatalogoRentas(rental)
+        return rental
 
     def return_bike(self, rental_id, end_date):
         rental:Rental = self.encontrar_rental(rental_id)
@@ -158,9 +159,9 @@ class BikeRentalSystem:
         for bike in self.bikes:
             print(bike)
     def eliminar_bicicleta(self, bike: Bike ):
-        self.bikes.remove(bike)
+        self.bikes = [b for b in self.bikes if b.id != bike.id]        
     def eliminar_usuario(self, user : User):
-        self.users.remove(user)
+        self.users = [u for u in self.users if u.name != user.name]
 class Invoice:
     def __init__(self, rental, price: str):
         self.rental = rental

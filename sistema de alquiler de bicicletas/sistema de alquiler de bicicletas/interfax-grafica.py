@@ -31,6 +31,12 @@ class MainWindowSistemaBicicleta(QMainWindow):
         self.listViewUsuariosDisponibles.selectionModel().selectionChanged.connect(self.obternerItemSeleccionadoUsuario)
         #este metodo se va a ejecutar cada que el usuario seleccione un item de las bicicletas
         self.listViewBicicletasDisponibles.selectionModel().selectionChanged.connect(self.obternerItemSeleccionadoBicicletas)
+
+
+        self.listViewrentas.selectionModel().selectionChanged.connect(self.obtenerItemSeleccionadoRenta)
+
+
+
         #enlazar los eventos de los botones /pushButtonAgrega_Nuevo_usuario /pushButtonAgregar_Nueva_Bicicleta / 
         self.pushButtonAgrega_Nuevo_usuario.clicked.connect(self.abrir_dialogo_Agregar_usuario)
         self.pushButtonAgregar_Nueva_Bicicleta.clicked.connect(self.abrir_dialogo_Agregar_bicicletas)
@@ -51,6 +57,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
             ).itemFromIndex(indice_seleccionado)  # Obtengo el item QStandardItem que se ha seleccionado a partir del indice obtenido en la linea 45
             # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
             print(f"Elemento seleccionado: {self.usuario_seleccionado.user}")
+
     def obternerItemSeleccionadoBicicletas(self):
         indice_seleccionado = self.listViewBicicletasDisponibles.currentIndex()
         if indice_seleccionado.isValid():  # Aca se verifica que el indice sea valido, (que no sea negativo y demas validaciones)
@@ -58,41 +65,58 @@ class MainWindowSistemaBicicleta(QMainWindow):
             ).itemFromIndex(indice_seleccionado)  # Obtengo el item QStandardItem que se ha seleccionado a partir del indice obtenido en la linea 45
             # imprimo el objeto user del item seleccionado. Este objeto user se asigna en la linea 56 de este archivo
             print(f"Elemento seleccionado: {self.bicicleta_seleccionada.bicis}")
-    def eliminarItemSeleccionadoUsuario(self):
+
+    def eliminarItemSeleccionadoUsuario(self):        
         # falta solucionar el error 
-        usuario = self.usuario_seleccionado.user
+        usuario = self.usuario_seleccionado
         if usuario is None:
+            msg_box = QMessageBox(None)
+            msg_box.setWindowTitle("Error")
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Debe Seleccionar el usuario para poder eliminarlo")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec()
             return
-        question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario{}".format(usuario.name),QMessageBox.Yes | QMessageBox.No)       
+        question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario {}".format(usuario.user.name),QMessageBox.Yes | QMessageBox.No)       
         if question == QMessageBox.Yes:
-            usuario.runin.eliminar_usuario()
+            self.runin.eliminar_usuario(usuario.user)            
+            self.__cargar_datos_usuario()
+        
 
-
-            del usuario.r
         #aqui se utiliza el metodo para eliminar un item del usuario 
     def eliminarItemSeleccionadoBicicleta(self):
-        bicicleta = self.bicicleta_seleccionada.bicis
+        bicicleta = self.bicicleta_seleccionada
         if bicicleta is None:
-            
+            msg_box = QMessageBox(None)
+            msg_box.setWindowTitle("Error")
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Debe Seleccionar una bicicleta para poder eliminarla")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec()
             return
-        question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.name) , QMessageBox.Yes | QMessageBox.No)
+        else:
+            question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.bicis.name) , QMessageBox.Yes | QMessageBox.No)
         if question == QMessageBox.Yes:
-            bicicleta.self.runin.eliminar_bicicleta()
-            del bicicleta
+            self.runin.eliminar_bicicleta(bicicleta.bicis)           
+            self.__cargar_datos_bicicletas()
 
     def obtenerRentaBicicletas(self):
         #aquí esta la funcion de rentar bicicleta 
-        usuario_selec = self.usuario_seleccionado.user
-        bicicleta_selec = self.bicicleta_seleccionada.bicis
+        usuario_selec = self.usuario_seleccionado
+        bicicleta_selec = self.bicicleta_seleccionada
         #se coloca porque me genera un error 
         end_date = 0
-        if usuario_selec and bicicleta_selec:
+        if usuario_selec is not None and bicicleta_selec is not None:
      # seleccionar bicicleta()
             start_date = datetime.now()
             print(start_date.hour)
             # crear el objeto,
-            id_rental = usuario_selec.name + usuario_selec.phone
-            self.runin.rentar_bike(bicicleta_selec,usuario_selec,start_date, end_date, id_rental)
+            id_rental = usuario_selec.user.name + usuario_selec.user.phone
+            new_rental = self.runin.rentar_bike(bicicleta_selec.bicis,usuario_selec.user,start_date, end_date, id_rental)            
+            item =QStandardItem(str(new_rental))
+            item.rental= new_rental
+            item.setEditable(False)
+            self.listViewrentas.model().appendRow(item) 
         else:
             msg_box = QMessageBox(None)
             msg_box.setWindowTitle("Error")
@@ -106,7 +130,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
         if indice_seleccionado.isValid():
             self.rentas_seleccionada = self.listViewrentas.model(
             ).itemFromIndex(indice_seleccionado) 
-            print(f"Elemento seleccionado: {self.rentas_seleccionada.rentas}")
+            print(f"Elemento seleccionado: {self.rentas_seleccionada.rent}")
             #solucionar el error no imprime
     def devolverRentaBicicletas(self):
         #Aqui irá el metodo para devolver la bicicleta y pagar 
@@ -115,6 +139,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
     def __cargar_datos_usuario(self):
         # se quiere cargar los datos del catalogo de usuarios
         usuarios = self.runin.users
+        self.listViewUsuariosDisponibles.model().clear()
         for user in usuarios:
             item =QStandardItem(str(user))
             item.user = user
@@ -123,6 +148,8 @@ class MainWindowSistemaBicicleta(QMainWindow):
     def __cargar_datos_rentas(self):
         #continuar con el proceso
         rentas = self.runin.rentals
+        self.listViewrentas.model().clear()
+        
         for rent in rentas:
             item = QStandardItem(str(rent))
             item.rent = rent
@@ -131,11 +158,12 @@ class MainWindowSistemaBicicleta(QMainWindow):
 
     def __cargar_datos_bicicletas(self):
         bicicletas = self.runin.bikes
+        self.listViewBicicletasDisponibles.model().clear()
         for bicis in bicicletas:
             item = QStandardItem(str(bicis))
             item.bicis = bicis
             item.setEditable(False)
-            self.listViewBicicletasDisponibles.model().appendRow(item)
+            self.listViewBicicletasDisponibles.model().appendRow(item)            
 
     def abrir_dialogo_Agregar_usuario(self):
         resp = self.dialogo_agregar_usuario.exec()
