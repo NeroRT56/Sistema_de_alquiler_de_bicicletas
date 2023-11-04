@@ -60,7 +60,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
             msg_box.setStandardButtons(QMessageBox.Ok)
             msg_box.exec()
             return  
-        question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario {}".format(usuario.user.name),QMessageBox.Yes | QMessageBox.No)
+        question =  question =QMessageBox.question(self,"Eliminar","¿Deseas eliminar el usuario ?{}".format(usuario.user.name),QMessageBox.Yes | QMessageBox.No)
         if question == QMessageBox.Yes:
             self.runin.eliminar_usuario(usuario.user)            
             self.__cargar_datos_usuario()
@@ -76,7 +76,7 @@ class MainWindowSistemaBicicleta(QMainWindow):
             msg_box.exec()
             return
         else:
-            question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta {}?".format(bicicleta.bicis.name) , QMessageBox.Yes | QMessageBox.No)
+            question = question = QMessageBox.question(self,"Eliminar","¿Deseas eliminar la bicicleta ? {}?".format(bicicleta.bicis.name) , QMessageBox.Yes | QMessageBox.No)
         if question == QMessageBox.Yes:
             self.runin.eliminar_bicicleta(bicicleta.bicis)           
             self.__cargar_datos_bicicletas()
