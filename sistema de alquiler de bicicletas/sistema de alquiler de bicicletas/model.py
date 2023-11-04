@@ -36,7 +36,7 @@ class Rental:
     # me toco colocar end_date porque me lo pedia 
 
     def calculate_price(self):
-        tomorrow = self.start_date +timedelta(days=self.end_date)
+        tomorrow = self.start_date +timedelta(days=self.end_date.day)
         hours = (tomorrow.day - self.start_date.day)
         return self.bike.price * math.ceil(hours)
     def __str__(self):
@@ -79,7 +79,7 @@ class BikeRentalSystem:
         with open ("data/catalogo-Rentas.csv") as file:
             csv_data = list(csv.reader(file, delimiter =(";")))
             print(csv_data)
-            rentas = list(map(lambda data: Rental(data[0], data[1], data[2], data[3], data[4]), list(csv_data)))
+            rentas = list(map(lambda data: Rental(data[0], data[1], datetime.strptime(data[2].strip(" "), "%Y-%m-%d %H:%M:%S" ), datetime.strptime(data[3].strip(" "), '%Y-%m-%d %H:%M:%S'), data[4]), list(csv_data)))
             self.rentals = rentas
             print(self.rentals)
 
@@ -101,7 +101,7 @@ class BikeRentalSystem:
             f_object.close()
     def __agregaralcatalogoRentas(self, rentas : Rental):
         listrentas= [rentas.bike, rentas.user , rentas.start_date, rentas.end_date, rentas.id_rental]
-        with open("data/catalogo-Rentas.csv", "a", newline="") as f_object:
+        with open("data/catalogo-Rentas.csv", "a", newline="\n") as f_object:
             writer_object = csv.writer(f_object, delimiter =(";"))
             writer_object.writerow(listrentas)
             f_object.close()
@@ -122,15 +122,13 @@ class BikeRentalSystem:
         rental = Rental(bike, user, start_date, end_date,  id_rental) # Aqui tambien me generaba error con el end date
         self.rentals.append(rental)
         bike.available = False
-        print(rental)
-        print(len(self.rentals))
         self.__agregaralcatalogoRentas(rental)
         return rental
 
     def return_bike(self, rental_id, end_date):
         rental:Rental = self.encontrar_rental(rental_id)
         rental.end_date = end_date
-        rental.bike.available = True
+        #rental.bike.available = True
         price = rental.calculate_price()
         invoice = Invoice(rental, price)
         self.invoices.append(invoice)
